@@ -4,6 +4,7 @@ const cors = require('cors')
 require('dotenv').config()
 
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 app.use(cors())
 app.use(express.static('public'))
@@ -19,6 +20,31 @@ const userModel = new Schema({
   username: { type: String, required: ture}
 });
 
+const userModel = mongoose.model('User', userSchema);
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
+
+app.post("/api/users", bodyParser.urlencoded({ extended: false }), function(req, res){
+  let response = {};
+  inputUsername = req.body['username'];
+
+  console.log("INFO: Creating new user - " + inputUsername.toString());
+
+  var newUser = new userModel({
+    username: inputUsername
+  });
+
+  newUser.save(function(err, data){
+    if(err){
+      console.log("ERROR: Failed to create new user - " + inputUsername.toString());
+      return console.log(err);
+    }
+    response['_id'] = data._id.toString();
+    response['username'] = data.username.toString();
+    
+    console.log("INFO: New user created - " + inputUsername.toString());
+    res.json(response);
+  });
+});
