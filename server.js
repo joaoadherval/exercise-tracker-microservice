@@ -73,7 +73,7 @@ app.post("/api/users/:_id/exercises", bodyParser.urlencoded({ extended: false })
   let inputDuration = req.body['duration'];
   let inputDate = req.body['date'];
 
-  if(inputDate == '') inputDate = new Date(Date.now()).toDateString();
+  if(inputDate == '' || inputDate == undefined) inputDate = new Date(Date.now()).toDateString();
   else inputDate = new Date(req.body['date']).toDateString();
 
   userModel.findById(inputId, function(err, result){
