@@ -100,7 +100,29 @@ app.post("/api/users/:_id/exercises", bodyParser.urlencoded({ extended: false })
       }
       console.log("INFO: New exercise created for user id - " + inputId.toString());
     });
-    console.log(response);
     res.json(response);
   });
+});
+
+app.get("/api/users/:_id/logs", function(req, res){
+  let response = {};
+
+  let inputId = req.params._id;
+
+  userModel.findById(inputId, function(err, userResult){
+    if(err) return console.log(err);
+
+    let returnedUser = userResult.username;
+
+    exerciseModel.find({ username: returnedUser }).select('description duration date').select({ _id: 0 }).exec(function(err, result){
+      if(err) console.log(err);
+      
+      response['_id'] = inputId;
+      response['username'] = returnedUser;
+      response['count'] = result.length;
+      response['log'] = result;
+
+      res.json(response);
+    });
+  })
 });
