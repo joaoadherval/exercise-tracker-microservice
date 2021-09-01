@@ -48,3 +48,10 @@ app.post("/api/users", bodyParser.urlencoded({ extended: false }), function(req,
     res.json(response);
   });
 });
+
+app.get("/api/users", function(req, res){
+  userModel.find({}).select('_id username').exec(function(err, result){
+    if(err) return console.log(err);
+    res.json(result);
+  });
+});
