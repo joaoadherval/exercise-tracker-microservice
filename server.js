@@ -20,7 +20,16 @@ const userModel = new Schema({
   username: { type: String, required: ture}
 });
 
+const exerciseSchema = new Schema({
+  userId: { type: Schema.ObjectId, required: true },
+  username: { type: String, required: true },
+  description: { type: String, required: true },
+  duration: { type: Number, required: true },
+  date: String
+});
+
 const userModel = mongoose.model('User', userSchema);
+const exerciseModel = mongoose.model('Exercise', exerciseSchema);
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
