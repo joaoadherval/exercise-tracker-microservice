@@ -64,3 +64,43 @@ app.get("/api/users", function(req, res){
     res.json(result);
   });
 });
+
+app.post("/api/users/:_id/exercises", bodyParser.urlencoded({ extended: false }), function(req, res){
+  let response = {};
+
+  let inputId = req.params._id;
+  let inputDesc = req.body['description'];
+  let inputDuration = req.body['duration'];
+  let inputDate = req.body['date'];
+
+  if(inputDate == '') inputDate = new Date(Date.now()).toDateString();
+  else inputDate = new Date(req.body['date']).toDateString();
+
+  userModel.findById(inputId, function(err, result){
+    if(err) return console.log(err);
+    
+    var newExercise = new exerciseModel({
+      userId: inputId,
+      username: result.username,
+      description: inputDesc,
+      duration: inputDuration,
+      date: inputDate
+    });
+
+    response['_id'] = inputId;
+    response['username'] = result.username;
+    response['description'] = inputDesc;
+    response['duration'] = parseInt(inputDuration);
+    response['date'] = inputDate;
+
+    newExercise.save(function(err, data){
+      if(err){
+        console.log("ERROR: Failed to create new exercise to user - " + inputId.toString());
+        return console.log(err);
+      }
+      console.log("INFO: New exercise created for user id - " + inputId.toString());
+    });
+    console.log(response);
+    res.json(response);
+  });
+});
