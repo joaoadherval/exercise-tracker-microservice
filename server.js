@@ -114,15 +114,33 @@ app.get("/api/users/:_id/logs", function(req, res){
 
     let returnedUser = userResult.username;
 
-    exerciseModel.find({ username: returnedUser }).select('description duration date').select({ _id: 0 }).exec(function(err, result){
+    var query = exerciseModel.find({ username: returnedUser }).select('description duration date').select({ _id: 0 });
+    
+    // if(req.query.from || req.query.to){
+    //   if(req.query.from){
+    //     fromDate = new Date(req.query.from).toDateString();
+    //     query.gt('date', fromDate);
+    //   }
+
+    //   if(req.query.to){
+    //     toDate = new Date(req.query.to).toDateString();
+    //     query.lt('date', toDate);
+    //   }
+    // }
+
+    if(req.query.limit){
+      query.limit(parseInt(req.query.limit));
+    }
+
+    query.exec(function(err, result){
       if(err) console.log(err);
-      
+
       response['_id'] = inputId;
       response['username'] = returnedUser;
       response['count'] = result.length;
       response['log'] = result;
 
-      res.json(response);
-    });
-  })
+      return res.json(response);
+    }); 
+  });
 });
